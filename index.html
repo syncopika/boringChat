@@ -1,0 +1,453 @@
+<!doctype html>
+
+<html>
+
+	<!-- help!
+	http://stackoverflow.com/questions/27253189/how-to-add-scrollbar-to-a-div-for-increasing-dynamic-table
+	http://stackoverflow.com/questions/7303948/how-to-auto-scroll-to-end-of-div-when-data-is-added
+	https://superuser.com/questions/93046/how-do-i-allow-a-remote-user-to-connect-to-a-web-app-running-on-my-pc
+	http://liamkaufman.com/blog/2012/01/28/testing-socketio-with-mocha-should-and-socketio-client/
+	http://stackoverflow.com/questions/5568965/get-data-from-mysql-database-to-use-in-javascript
+	http://stackoverflow.com/questions/35451450/how-to-fetch-data-from-mysql-database-in-javascript-to-build-a-chart
+	https://stackoverflow.com/questions/26331787/socket-io-node-js-simple-example-to-send-image-files-from-server-to-client
+	https://stackoverflow.com/questions/34850386/socket-io-chat-app-that-can-also-send-image-and-even-file
+	https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender-socket-io
+	https://stackoverflow.com/questions/14648598/is-it-necessary-to-set-onload-function-before-setting-src-for-an-image-object
+	https://stackoverflow.com/questions/23237047/getting-data-from-query-sql-database-to-javascript
+	https://stackoverflow.com/questions/406316/how-to-pass-data-from-javascript-to-php-and-vice-versa
+	https://stackoverflow.com/questions/2023481/mysql-large-varchar-vs-text
+	http://www.js-tutorials.com/javascript-tutorial/nodejs-example-upload-store-image-mysql-express-js/
+	-->
+
+	<head>
+		<meta charset='utf-8'>
+		<title> my first chat application with socket.io </title>
+		<style>
+			html, body{
+				height: 100%;
+				width: 100%;
+			}
+			body {
+				font: 13px Helvetica, Arial;
+			}
+			#optionsBar{
+				float: left;
+				display: inline-block;
+				height: 94%;
+				width: 20%;
+				border: 1px solid #000;
+				margin-right: 2%;
+				padding-left: 10px;
+				padding-right: 8px;
+			}
+			#chatbox{
+				float: left;
+				height: 94%;
+				width: 60%;
+				border: 1px solid #000;
+			}
+			
+			#display{
+				position: relative;
+				left: 0;
+				top: 0;
+				height: 95%;
+				max-height: 95%;
+				overflow: auto;
+				border: 1px solid #000;
+			}
+			
+			form {
+				position: relative;
+				background: #fff;
+				bottom: 0;
+				top: 95%;
+			}
+			form input {
+				border: 1px solid #000;
+				padding: 10px;
+				width: 90%;
+				margin-right: .2%;
+			}
+			form button {
+				width: 7%;
+				background: rgb(130, 224, 255);
+				padding: 10px;
+			}
+			#messages {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+			#messages li{
+				padding: 5px 10px;
+				margin: 0;
+			}
+			#messages li:nth-child(odd){
+				background: #eee;
+			}
+			
+			#picReactionChoices, #asciiReactionChoices{
+				display: none; /* only show when an option is selected */
+				border: 1px solid #000;
+				height: 10%; /* change this later */
+			}
+			
+			#addNewEmoticon li{
+				list-style-type: none;
+			}
+			
+			#addNewEmoticon ul{
+				padding-left: 0;
+			}
+			
+			.asciiface:hover{
+				background-color: rgba(0, 178, 0, .2);
+			}
+			
+			/*
+			.removeAscii:hover{
+				background-color: rgba(178, 0, 0, .8);
+			}*/
+		</style>
+	</head>
+	
+	<body>
+	
+		<h2> fun talk </h2>
+	
+		<div id='optionsBar'>
+		
+			<div id='people'>
+				<h3> currently online: </h2>
+				<ol>
+					<li> me </li>
+					<li> someone </li>
+				</ol>
+			</div>
+			
+			<div id='reactionPics'>
+				<h2> reaction pictures </h2>
+				<!-- select a reaction picture here -->
+				<select id='selectReactPic' onchange="showChoices(this)">
+					<!-- value has p for pic -->
+					<option value="p0"></option>
+					<option value="p1"> happy </option>
+					<option value="p2"> sad </option>
+					<option value="p3"> angry </option>
+					<option value="p4"> funny </option>
+				</select>
+				<!-- choices show up here after selecting option --> 
+				<div id='picReactionChoices'>
+					<h1> stuff goes here... <h2>
+				</div>
+			</div>
+			
+			<div id='reactionASCII'>
+				<h2> reaction ascii emoticons </h2>
+				<!-- select a reaction ascii emoticon thing here -->
+				<select id='selectReactAscii' onchange="showChoices(this)">
+					<!-- value has a for ascii -->
+					<option value="a0"></option>
+					<option value="a1"> happy </option>
+					<option value="a2"> sad </option>
+					<option value="a3"> angry </option>
+					<option value="a4"> funny </option>
+				</select>
+				<!-- choices show up here after selecting option --> 
+				<div id='asciiReactionChoices'>
+					<ul id='emoticonChoices'>
+					</ul>
+				</div>
+				<h3> add a new reaction ascii </h3>
+				<!-- 2 input? one for option, the other for the ascii emoticon -->
+				<div id='addNewEmoticon'>
+					<ul>
+						<label> emotion: </label>
+						<li><input type='text' id='newOption'></input></li>
+						<label> ascii: </label>
+						<li><input type='text' id='newEmoticon'></input></li>
+						<button onclick='addNewEmoticon()'> add </button>
+					</ul>
+				</div>
+				<!-- send a pic -->
+				<div id='sendPic'>
+					<h3> send picture </h3>
+					<input id="fileInput" style="display:none;" type="file">
+					<button onclick='fileHandler()'> select picture </button>
+				</div>
+				<!-- add a new reaction pic -->
+				<div id='addNewReactPic'>
+					<h3> add new reaction pic! </h3>
+					<input id="fileInput" style="display:none;" type="file">
+					<button onclick=''> import </button>
+				</div>
+			</div>
+		</div>
+	
+		<div id='chatbox'>
+			<div id='display'>
+				<ul id="messages"></ul>
+			</div>
+			
+			<div id='sendMsg'>
+				<form action="">
+				<input id="m" autocomplete="off" />
+					<button> Send </button>
+				</form>
+			</div>
+		</div>
+		
+		
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+		<script>
+		
+			// this will be different for each user - this info should be stored in a database
+			// note that strings with certain characters need to be escaped!! i.e. "\" -> this kind of slash, to print correctly, needs to be "\\"
+			var userAscii = {'happy': ["^_^", ":)", ":D"], 'sad': [], 'angry': ["（　ﾟДﾟ）"], 'funny': ["¯\\_(ツ)_/¯"], 'other': ["ʕ•ᴥ•ʔ"]};	// default emotions
+			var socket = io();
+			
+			$(function(){
+				$('form').submit(function(){
+					// send the message to the server, which will then send this message to all clients
+					socket.emit('chat message', $('#m').val());
+					$('#m').val('');
+					return false;
+				});
+				socket.on('chat message', function(msg){
+					// this is the client part. when you receive a message from the server, display it.
+					$('#messages').append($('<li>').text(msg));
+				});
+				socket.on('image', function(imgData){
+					// this is where client handles imgData sent from the server 
+					var img = new Image();
+					img.src = imgData;
+					
+					var canvas = document.createElement('canvas');
+					canvas.setAttribute("width", "200px");
+					canvas.setAttribute("height", "200px");
+					
+					img.onload = function(){
+						var ctx = canvas.getContext('2d');
+						ctx.drawImage(img, 0, 0, 200, 200);
+					}
+					
+					var newListElement = document.createElement('li');
+					var timestamp = new Date().toLocaleString();
+					
+					newListElement.appendChild(canvas);
+					var date = document.createElement('span');
+					date.textContent = timestamp;
+					
+					newListElement.appendChild(date);
+					$('#messages').append(newListElement);
+				});
+			});
+			
+			function showChoices(option){
+			
+				var emoticonOptions = document.getElementById('emoticonChoices');
+				emoticonOptions.innerHTML = ""; // clear current contents 
+				
+				// check if blank option selected. don't show anything 
+				if(option.value === "p0"){
+					document.getElementById('picReactionChoices').style.display = "none";
+					return;
+				}else if(option.value === "a0"){
+					document.getElementById('asciiReactionChoices').style.display = "none";
+					return;
+				}
+			
+				var selectedOption;
+				
+				// get the array that matches the selected emotion option 
+				for(emotion in userAscii){
+					if(emotion === $('[value=' + option.value + ']')[0].text){
+						selectedOption = userAscii[emotion];
+						break;
+					}
+				}
+				
+				for(var i = 0; i < selectedOption.length; i++){
+					
+					// the idea is to create a set of elements like so:
+					// <li> <span> emoticon here <span> <span> remove option </span> </li>
+					var newListElement = document.createElement('li');
+					var newEmoticon = document.createElement('span');
+					newEmoticon.textContent = selectedOption[i];
+					
+					newEmoticon.className = "asciiface";
+					newEmoticon.addEventListener('click', function(){
+						addReaction(this);
+					}, false);
+					newEmoticon.style.paddingRight = "30%";
+					newListElement.style.paddingBottom = "5px";
+					
+					// add a remove element to allow removal if wanted
+					var removeEl = document.createElement('span');
+					removeEl.textContent = "remove";
+					removeEl.className = "removeAscii";
+					removeEl.style.display = "inline-block";
+					removeEl.addEventListener('click', function(){
+						removeEmoticon(this);
+					}, false);
+					
+					// append new element to emoticonOptions
+					emoticonOptions.appendChild(newListElement);
+					newListElement.appendChild(newEmoticon);
+					newListElement.appendChild(removeEl);
+				}
+			
+				// display choices 
+				if(option.value[0] === "p"){
+					var choices = document.getElementById('picReactionChoices');
+					choices.style.display = "block";
+				}else{
+					var choices = document.getElementById('asciiReactionChoices');
+					choices.style.display = "block";
+				}
+				
+			}
+			
+			/*
+				add reaction to message input 
+			*/
+			function addReaction(element){
+				var reaction = element.textContent;
+				$('#m').val( $('#m').val() + " " + reaction );
+			}
+			
+			/*
+				add a new custom emoticon to the dropdown box
+			*/
+			function addNewEmoticon(){
+				var option = document.getElementById('newOption').value;
+				var emoticon = document.getElementById('newEmoticon').value;
+				var select = document.getElementById('selectReactAscii');
+				
+				if(userAscii[option]){
+				
+					// check if it's already in the set
+					for(var i = 0; i < userAscii[option].length; i++){
+						if(userAscii[option][i] === emoticon){
+							return; 
+						}
+					}
+					
+					userAscii[option].push(emoticon);
+					
+				}else{
+					// add new option because it doesn't exist yet 
+					userAscii[option] = [emoticon];
+					
+					// update dropdown box
+					// find out how many options there currently are for the select
+					var numOptions = select.childNodes.length; // this is the number of the new option
+					
+					// add new option to dropdown
+					var newOption = document.createElement('option');
+					newOption.setAttribute('value', 'a' + numOptions);
+					newOption.textContent = option;
+					select.appendChild( newOption );
+				}
+				
+				// check if that option is currently selected
+				// if so, update options 
+				var emoticonOptions = document.getElementById('emoticonChoices');
+				if(select.options[select.selectedIndex].text.trim() === option){
+					
+					var newListElement = document.createElement('li');	
+					var newEmoticon = document.createElement('span');
+					newEmoticon.textContent = emoticon;
+					newEmoticon.className = "asciiface";
+					newEmoticon.style.paddingRight = "30%";
+					newEmoticon.addEventListener('click', function(){
+						addReaction(this);
+					}, false);
+					
+					newListElement.style.paddingBottom = "5px";
+
+					// add a remove element to allow removal if wanted
+					var removeEl = document.createElement('span');
+					removeEl.textContent = "remove";
+					removeEl.className = "removeAscii";
+					removeEl.style.display = "inline-block";
+					removeEl.addEventListener('click', function(){
+						removeEmoticon(this);
+					}, false);
+					
+					// append new element to emoticonOptions
+					emoticonOptions.appendChild(newListElement);
+					newListElement.appendChild(newEmoticon);
+					newListElement.appendChild(removeEl);
+				}
+			}
+			
+			/*
+				remove an emoticon
+			*/
+			function removeEmoticon(element){
+				// remove from array first!
+				var emoticonToRemove = element.parentNode.textContent;
+				// find out the current selected option
+				var select = document.getElementById('selectReactAscii');
+				var option = select.options[select.selectedIndex].textContent.trim();
+				
+				// find the right emoticon to remove in the array it's in
+				var arr = userAscii[option];
+			
+				// adjust emoticonToRemove to remove the 'remove' string from the span element
+				var emoticonToRemove = emoticonToRemove.substring(0, emoticonToRemove.indexOf('remove'));
+				
+				for(var i = 0; i < arr.length; i++){
+					if(arr[i] === emoticonToRemove){
+						arr.splice(i, 1);
+					}
+				}
+				
+				element.parentNode.parentNode.removeChild(element.parentNode);
+			}
+			
+			/*
+				import a picture 
+			*/
+			function fileHandler(){
+				//initiate file choosing after button click
+				var input = document.getElementById('fileInput');
+				input.addEventListener('change', getFile, false);
+				input.click();
+			}
+
+			function getFile(e){
+
+				var reader = new FileReader();
+				var file = e.target.files[0];
+				var imgData;
+				
+				if (!file.type.match(/image.*/)){
+					console.log("not a valid image");
+					return;
+				}
+				
+				//after reader has loaded file, put the data in the image object.
+				reader.onloadend = function(){
+					
+					// get the base64 data of the image and assign it to imgData variable 
+					imgData = reader.result;
+					
+					// send that variable to the server so it can send it to all clients
+					socket.emit('image', imgData);
+				
+				}
+
+				//read teh file as a URL
+				reader.readAsDataURL(file);
+			};
+
+			
+		</script>
+		
+	</body>
+
+</html>
