@@ -1,0 +1,38 @@
+mysql cheatsheet
+
+SHOW DATABASES; -> show all databases 
+
+USE database_name; -> use the database named by database_name 
+
+CREATE DATABASE name; -> create a new database 
+
+
+----- INSIDE THE DATABASE -------
+
+SHOW TABLES;
+
+SHOW FIELDS FROM table;
+
+CREATE TABLE table_name (
+	col_1 definition,  #i.e. id INT(11) NOT NULL AUTO_INCREMENT
+ 	col_2 definition,  #     menu_name VARCHAR(30) NULL
+	...,
+	options            # PRIMARY KEY (id)
+	);
+
+SHOW COLUMNS FROM table_name;
+
+SELECT *
+FROM table
+WHERE col1 = 'sometext'
+ORDER BY col1 ASC; 
+
+INSERT INTO table (col1, col2, col3)
+VALUES (val1, val2, val3);
+
+UPDATE table 
+SET col1 = 'sometext'
+WHERE id = 1;
+
+DELETE FROM table
+WHERE id = 1
