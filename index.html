@@ -7,21 +7,41 @@
 	http://stackoverflow.com/questions/7303948/how-to-auto-scroll-to-end-of-div-when-data-is-added
 	https://superuser.com/questions/93046/how-do-i-allow-a-remote-user-to-connect-to-a-web-app-running-on-my-pc
 	http://liamkaufman.com/blog/2012/01/28/testing-socketio-with-mocha-should-and-socketio-client/
-	http://stackoverflow.com/questions/5568965/get-data-from-mysql-database-to-use-in-javascript
-	http://stackoverflow.com/questions/35451450/how-to-fetch-data-from-mysql-database-in-javascript-to-build-a-chart
 	https://stackoverflow.com/questions/26331787/socket-io-node-js-simple-example-to-send-image-files-from-server-to-client
 	https://stackoverflow.com/questions/34850386/socket-io-chat-app-that-can-also-send-image-and-even-file
 	https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender-socket-io
 	https://stackoverflow.com/questions/14648598/is-it-necessary-to-set-onload-function-before-setting-src-for-an-image-object
-	https://stackoverflow.com/questions/23237047/getting-data-from-query-sql-database-to-javascript
-	https://stackoverflow.com/questions/406316/how-to-pass-data-from-javascript-to-php-and-vice-versa
 	https://stackoverflow.com/questions/2023481/mysql-large-varchar-vs-text
+	https://stackoverflow.com/questions/7990890/how-to-implement-login-auth-in-node-js
+	https://stackoverflow.com/questions/6011984/basic-ajax-send-receive-with-node-js
+	http://mherman.org/blog/2013/10/20/handling-ajax-calls-with-node-dot-js-and-express-scraping-craigslist/#.WUbTVOsrKUk
+	https://stackoverflow.com/questions/18831783/calling-a-server-side-function-from-client-sidehtml-button-onclick-in-node-js
+	
+	database stuff 
+	
+	mongodb
+	http://mongodb.github.io/node-mongodb-native/2.2/quick-start/quick-start/
+	https://stackoverflow.com/questions/20321291/ajax-call-to-from-mongodb-example-for-node-express
+	https://stackoverflow.com/questions/5019268/sending-http-request-in-javascript-to-get-results-from-mongodb
+	https://stackoverflow.com/questions/19249722/using-the-db-collection-find-query-in-a-sub-document
+	https://stackoverflow.com/questions/4588303/in-mongodb-how-do-you-remove-an-array-element-by-its-index
+	https://closebrace.com/tutorials/2017-03-02/the-dead-simple-step-by-step-guide-for-front-end-developers-to-getting-up-and-running-with-nodejs-express-and-mongodb
+	https://blogs.msdn.microsoft.com/cdndevs/2014/09/19/a-chatroom-for-all-part-3-building-a-backend-with-node-mongo-and-socket-io/
+	https://stackoverflow.com/questions/38554098/how-to-request-mongodb-nodejs-with-javascript-client-side-app   -> SUPER HELPFUL!	
+	https://zellwk.com/blog/crud-express-mongodb/
+	
+	mysql
 	http://www.js-tutorials.com/javascript-tutorial/nodejs-example-upload-store-image-mysql-express-js/
+	http://stackoverflow.com/questions/35451450/how-to-fetch-data-from-mysql-database-in-javascript-to-build-a-chart
+	http://stackoverflow.com/questions/5568965/get-data-from-mysql-database-to-use-in-javascript
+	https://stackoverflow.com/questions/23237047/getting-data-from-query-sql-database-to-javascript
 	-->
 
 	<head>
 		<meta charset='utf-8'>
 		<title> my first chat application with socket.io </title>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
 		<style>
 			html, body{
 				height: 100%;
@@ -56,7 +76,9 @@
 				overflow: auto;
 				border: 1px solid #000;
 			}
-			
+			li{
+				font-size: 18px;
+			}
 			form {
 				position: relative;
 				background: #fff;
@@ -149,10 +171,10 @@
 				<select id='selectReactAscii' onchange="showChoices(this)">
 					<!-- value has a for ascii -->
 					<option value="a0"></option>
-					<option value="a1"> happy </option>
-					<option value="a2"> sad </option>
-					<option value="a3"> angry </option>
-					<option value="a4"> funny </option>
+					<option value="ascii_happy"> happy </option>
+					<option value="ascii_sad"> sad </option>
+					<option value="ascii_angry"> angry </option>
+					<option value="ascii_funny"> funny </option>
 				</select>
 				<!-- choices show up here after selecting option --> 
 				<div id='asciiReactionChoices'>
@@ -185,6 +207,7 @@
 			</div>
 		</div>
 	
+	
 		<div id='chatbox'>
 			<div id='display'>
 				<ul id="messages"></ul>
@@ -198,17 +221,15 @@
 			</div>
 		</div>
 		
-		
-		<script src="/socket.io/socket.io.js"></script>
-		<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 		<script>
 		
 			// this will be different for each user - this info should be stored in a database
 			// note that strings with certain characters need to be escaped!! i.e. "\" -> this kind of slash, to print correctly, needs to be "\\"
-			var userAscii = {'happy': ["^_^", ":)", ":D"], 'sad': [], 'angry': ["（　ﾟДﾟ）"], 'funny': ["¯\\_(ツ)_/¯"], 'other': ["ʕ•ᴥ•ʔ"]};	// default emotions
+			var defaultAscii; // = {'happy': ["^_^", ":)", ":D"], 'sad': [], 'angry': ["（　ﾟДﾟ）"], 'funny': ["¯\\_(ツ)_/¯"], 'other': ["ʕ•ᴥ•ʔ"]};	// default emotions
 			var socket = io();
 			
 			$(function(){
+			
 				$('form').submit(function(){
 					// send the message to the server, which will then send this message to all clients
 					socket.emit('chat message', $('#m').val());
@@ -245,6 +266,23 @@
 				});
 			});
 			
+			
+			/*****
+				make call to server (i.e. index.js), which then calls database.
+				get back an associative array and assign defaultAscii to it! 		
+			*****/
+			// pass in "/default" because that is what tells the server to send the default info 
+			$.getJSON("/default", function(data){
+				// if successful, the data from the database should be available here 
+				// console.log(data);
+				defaultAscii = data;
+			});
+			
+			/*****
+			
+				after selecting an emotion, show options for that selection 
+			
+			******/
 			function showChoices(option){
 			
 				var emoticonOptions = document.getElementById('emoticonChoices');
@@ -259,12 +297,12 @@
 					return;
 				}
 			
-				var selectedOption;
-				
+				var selectedOption; // the ascii face the user selects
+
 				// get the array that matches the selected emotion option 
-				for(emotion in userAscii){
-					if(emotion === $('[value=' + option.value + ']')[0].text){
-						selectedOption = userAscii[emotion];
+				for(emotion in defaultAscii){
+					if(emotion === option.value){		
+						selectedOption = defaultAscii[emotion];
 						break;
 					}
 				}
@@ -326,20 +364,27 @@
 				var emoticon = document.getElementById('newEmoticon').value;
 				var select = document.getElementById('selectReactAscii');
 				
-				if(userAscii[option]){
+				if(defaultAscii[option]){
 				
 					// check if it's already in the set
-					for(var i = 0; i < userAscii[option].length; i++){
-						if(userAscii[option][i] === emoticon){
+					for(var i = 0; i < defaultAscii[option].length; i++){
+						if(defaultAscii[option][i] === emoticon){
 							return; 
 						}
 					}
 					
-					userAscii[option].push(emoticon);
+					defaultAscii[option].push(emoticon);
+					
+					/********
+						update the database here!
+						make an ajax call to server and post 
+					
+					
+					*********/
 					
 				}else{
 					// add new option because it doesn't exist yet 
-					userAscii[option] = [emoticon];
+					defaultAscii[option] = [emoticon];
 					
 					// update dropdown box
 					// find out how many options there currently are for the select
@@ -350,6 +395,14 @@
 					newOption.setAttribute('value', 'a' + numOptions);
 					newOption.textContent = option;
 					select.appendChild( newOption );
+					
+					/********
+						update the database here!
+						make an ajax call to mongodb and post 
+					
+						in this case, you also have to make a new ascii_emotion category!
+					
+					*********/
 				}
 				
 				// check if that option is currently selected
@@ -388,6 +441,7 @@
 				remove an emoticon
 			*/
 			function removeEmoticon(element){
+			
 				// remove from array first!
 				var emoticonToRemove = element.parentNode.textContent;
 				// find out the current selected option
@@ -395,18 +449,28 @@
 				var option = select.options[select.selectedIndex].textContent.trim();
 				
 				// find the right emoticon to remove in the array it's in
-				var arr = userAscii[option];
+				//var arr = defaultAscii[option];
 			
 				// adjust emoticonToRemove to remove the 'remove' string from the span element
 				var emoticonToRemove = emoticonToRemove.substring(0, emoticonToRemove.indexOf('remove'));
-				
-				for(var i = 0; i < arr.length; i++){
-					if(arr[i] === emoticonToRemove){
-						arr.splice(i, 1);
-					}
-				}
-				
-				element.parentNode.parentNode.removeChild(element.parentNode);
+			
+			
+				$.ajax({
+						type: 'DELETE',
+						 // append the selected ascii face, and its category, as query parameters to the url.
+						 // the two queries are: category and face 
+						url: '/delete_asciiface/?' + 'category=' + option + '&' + 'face=' + emoticonToRemove,
+						success: function(response){				
+							// get back updated ascii face array and reasign to userAscii
+							defaultAscii = response;
+
+							// re-show selected emotion option contents after update 
+							showChoices(select.options[select.selectedIndex]);			
+							
+							// indicate successful delete 
+							//console.log(response);
+						}
+				});
 			}
 			
 			/*
