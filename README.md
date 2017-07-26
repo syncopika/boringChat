@@ -12,6 +12,7 @@ realistically, I'm not sure how well this would scale. of course, since my main 
 I think that lots of companies have probably thought of this sort of thing already, and they knew the costs of allowing these features would probably end up being pretty crazy. For my implementation, a limit to maybe 10 new ascii faces and 5 pictures might be reasonable? ¯\\_(ツ)_/¯ anyhow, so far it's been an interesting learning experience ^_^.
     
 ### steps needed to make this work locally:    
-1. startup the database by executing mongod.exe and then mongo.exe on the command line.    
-2. go to the directory for "index.js" (need to rename this) and on command line: node index.js. this starts up the express server.    
+1. don't forget to have the dependencies installed via npm!     
+2. startup the database by executing mongod.exe and then mongo.exe on the command line.    
+3. go to the directory for "index.js" (need to rename this) and on command line: node index.js. this starts up the express server.    
 
