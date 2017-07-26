@@ -1,0 +1,110 @@
+<!-- login page for my chat app -->
+
+<!doctype html>
+
+<html>
+
+<style>
+	html, body{
+		position: relative;
+	}
+	#loginScreen{
+		position: relative;
+		display: block;
+		width: 400px;
+		height: 400px;
+		margin: 0 auto;
+		margin-top: 10%;
+		border: 1px solid #000;
+		border-radius: 15px;
+		text-align: center;
+		box-shadow: 8px 6px 6px #cccddd; 
+	}
+	#top, #bottom{
+		font-family: 'Indie Flower', cursive;
+	}
+	#bottom{
+		position: absolute;
+		bottom: 0;
+		left: 10%;
+	}
+	#user, #pass{
+		font-family: 'Poppins', sans-serif;
+		font-size: 18px;
+		display: block;
+		margin-top: 5%;
+	}
+	#myname, #def{
+		font-family: 'Poppins', sans-serif;
+		font-size: 10px;
+	}
+	button{
+		margin-top: 10px;
+		padding: 4px 5px 4px 5px;
+		border-radius: 6px;
+		border: 1px solid #000;
+	}
+	a{
+		text-decoration: none;
+		color: #eaaabe;
+	}
+
+</style>
+
+<head>
+	<meta charset='utf-8'>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+	<title> nick's chatapp login </title>
+</head>
+
+<body>
+
+	<div id='loginScreen'>
+		<div id='top'>
+			<h2> nick's chat app. whoooo. </h2>
+			<p> this is not supposed to be a real production-ready app. any username and password will do. </p>
+		</div>
+		<label id='user'> user name: <input id='username' type='text'></label>
+		<label id='pass'> password: <input id='password' type='password'></label>
+		<p id='def'> or <a onclick='defaultSubmit()' href='#'> enter </a> as a default user (nothing will be saved!) </p>
+		<button id='submit' onclick='submit()'> enter </button>
+		<div id='bottom'>
+			<p> check out these awesome fonts <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> here </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> here </a>! </p>
+			<hr>
+			<p id='myname'> (c) n.c.h 2017 </p>
+		</div>
+	</div>
+	
+</body>
+
+<script>
+// help!
+// https://stackoverflow.com/questions/14035264/node-js-username-and-password-authentication
+// https://stackoverflow.com/questions/7990890/how-to-implement-login-auth-in-node-js/8003291#8003291
+
+function submit(){
+
+	// for now, just send a quick get request to the server and get the chat page.
+	// btw, this should be POST!!!
+	$.ajax({
+		type: 'GET',
+		contentType: 'application/json',
+		url: '/test',
+		success: function(response){
+			// how to do page redirect??
+			console.log("login success!");
+		}
+	});
+}
+
+// if user wants to not login/make account
+// just redirect to the chat 
+function defaultSubmit(){
+	window.location.href = '/index.html';
+}
+
+</script>
+
+</html>

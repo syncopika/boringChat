@@ -1,7 +1,9 @@
 // set up server 
 // also hooking up database (mongodb) 
 
-var app = require('express')();
+var appEx = require('express');
+var app = appEx();
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -10,17 +12,25 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 
+// help! - https://stackoverflow.com/questions/8240447/express-js-cant-redirect
+// https://stackoverflow.com/questions/41768092/simple-redirect-in-express-with-static-file
+// https://stackoverflow.com/questions/38441863/failed-to-load-resource-from-same-directory-when-redirecting-javascript
+// https://stackoverflow.com/questions/39719693/redirected-to-wrong-html-page-when-using-express-static-dirname-function-in-n
+
 // this will serve the login page to the user first!
 // if login is successful, then the server can serve the chat page
 app.get('/', function(req, res){
 	
-	//res.sendFile(__dirname + '/login.html');
+	res.sendFile(__dirname + '/login.html');
 	
 	// this says: "send the html page to the client"
-	res.sendFile(__dirname + '/index.html');
+	// res.sendFile(__dirname + '/index.html');
 });
 
+
+
 // this is for when a login is successful. send the client the chat page.
+// should be POST! and needs authentication
 app.get('/test', function(req, res){
 	console.log("i see the request.");
 	res.sendFile(__dirname + '/index.html');
@@ -47,6 +57,43 @@ app.get('/default', function(req, res){
 	});
 });
 
+// this is for when user wants to add a new emoticon 
+app.post('/post_ascii', function(req, res){
+	
+	// get the query parameters 
+	var category = "ascii_" + req.query.category;
+	var selectedFace = req.query.face;
+	
+	// connect with db
+	var url = 'mongodb://127.0.0.1:27017';
+	MongoClient.connect(url, function(err, db){
+		assert.equal(null, err);
+		console.log('addng a new emoticon...');
+		
+		// add the new emoticon here.
+		// need to check if category already exists. if it does, append the face to the category's array.
+		// if not, need to add new field (the category).
+		var query = {};
+		query[category] = selectedFace; // i.e. { 'ascii_happy': ':>' }
+		
+		var addAscii = { $addToSet: ""};
+		for(prop in addAscii){
+			addAscii[prop] = query;
+		}
+		
+		// add to database
+		db.collection('users').update({"_id": "default"}, addAscii);
+		
+		// send new updated collection to client 
+		var updatedSet = db.collection('users').findOne({"_id": "default"}, function(err, result){
+			//console.log(result);
+			res.send(result);
+		})
+		
+		db.close();
+	});
+	
+});
 
 // this is for when the user deletes an ascii face 
 // btw, an interesting thing about using variable names for keys in objects:
@@ -70,7 +117,7 @@ app.delete('/delete_asciiface', function(req, res){
 		query[categoryToFind] = { $in: [selectedFace] };
 		var removeAscii = {$pull: ""};
 		
-		// can't acess $pull operator directly, so try loop 
+		// can't acess $pull operator directly, so try loop, since only one key anyway in removeAscii
 		for(prop in removeAscii){
 			removeAscii[prop] = query;
 		}
