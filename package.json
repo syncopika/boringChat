@@ -1,5 +1,5 @@
 {
-  "name": "socket-chat-example",
+  "name": "chatapp",
   "version": "0.0.1",
   "description": "my first socket.io application",
   "main": "index.js",
@@ -9,7 +9,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.17.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.6",
     "express": "^4.15.2",
+    "express-session": "^1.15.5",
+    "mongodb": "^2.2.28",
+    "mongoose": "^4.11.5",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "socket.io": "^1.7.3"
   }
 }
