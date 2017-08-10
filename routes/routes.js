@@ -42,14 +42,6 @@ module.exports = function(app, passport){
 	// it can get served because there's no html already present. 
 	// https://stackoverflow.com/questions/10777246/interweave-ejs-and-javascript-variables-inside-tags
 	
-	/*
-	// skip login option (default user)
-	app.post('/nologin', function(req, res){
-		res.status(200);
-		res.end();
-	});
-	*/
-	
 	// show the register page 
 	app.get('/register', function(req, res){
 		res.render('register.ejs', { message: req.flash('registerMessage') });	

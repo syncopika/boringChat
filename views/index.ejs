@@ -4,19 +4,20 @@
 
 	<head>
 		<meta charset='utf-8'>
-		<title> cool chat app </title>
+		<title> fun chat </title>
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
 		<style>
-			html, body{
+			html, body {
 				height: 100%;
 				width: 100%;
 			}
 			body {
-				font: 13px Helvetica, Arial;
+				font: 13px;
+				font-family: 'Roboto Condensed', sans-serif;
 			}
-			#optionsBar{
-				float: left;
+			#optionsBar {
 				display: inline-block;
 				height: 94%;
 				width: 20%;
@@ -24,44 +25,49 @@
 				margin-right: 2%;
 				padding-left: 10px;
 				padding-right: 8px;
+				overflow: auto;
 			}
-			#chatbox{
-				float: left;
-				height: 94%;
-				width: 60%;
-				border: 1px solid #000;
+			#chatbox {
+				display: inline-block;
+				position: absolute;
+				height: 100%;
+				width: 65%;
 			}
 			
-			#display{
+			#display {
 				position: relative;
 				left: 0;
 				top: 0;
-				height: 95%;
-				max-height: 95%;
+				height: 90%;
+				border: 1px solid #000;
 				overflow: auto;
 			}
-			li{
+			.ascii_face li {
 				font-size: 18px;
+			}
+			.ascii_face p {
+				display: inline-block;
 			}
 			form {
 				position: relative;
 				background: #fff;
-				bottom: 0;
+				padding: none;
 				top: 95%;
+				width: 100%;
 			}
 			form input {
 				border: 1px solid #000;
 				padding: 10px;
 				width: 90%;
-				margin-right: .2%;
+				margin-right: 1%;
 			}
 			form button {
-				width: 7%;
+				width: auto;
 				background: rgb(130, 224, 255);
-				padding: 10px;
+				padding: 10px 15px 10px 15px;
 			}
-			#optionsBar button{
-				padding: 3px;
+			#optionsBar button {
+				padding: 3px 5px 3px 5px;
 				border: 1px solid #000;
 				border-radius: 6px;
 			}
@@ -70,7 +76,7 @@
 				margin: 0;
 				padding: 0;
 			}
-			#messages li{
+			#messages li {
 				padding: 5px 10px;
 				margin: 0;
 			}
@@ -78,36 +84,38 @@
 				background: #eee;
 			}
 			
-			#picReactionChoices, #asciiReactionChoices{
+			#picReactionChoices, #asciiReactionChoices {
 				display: none; /* only show when an option is selected */
 				border: 1px solid #000;
 				height: 10%; /* change this later */
 			}
 			
-			#addNewEmoticon li{
+			#addNewEmoticon li {
 				list-style-type: none;
 			}
 			
-			#addNewEmoticon ul{
+			#addNewEmoticon ul {
 				padding-left: 0;
 			}
 			
-			.asciiface:hover{
+			.asciiface:hover {
 				background-color: rgba(0, 178, 0, .2);
 			}
-			.removeAscii{
+			.removeAscii {
 				display: inline-block;
+				padding-left: 20px;
 			}
-			/*
-			.removeAscii:hover{
-				background-color: rgba(178, 0, 0, .8);
-			}*/
+
+			.removeAscii:hover {
+				color: rgba(178, 0, 0, .8);
+			}
+
 		</style>
 	</head>
 	
 	<body>
 	
-		<h2> fun talk </h2>
+		<h2> fun chat </h2>
 	
 		<div id='optionsBar'>
 		
@@ -152,12 +160,12 @@
 			<hr>
 			
 			<div id='reactionASCII'>
-				<h2> reaction ascii emoticons </h2>
+				<h2> ascii emoticons </h2>
 				
 				<!-- select a reaction ascii emoticon thing here -->
+				<label> select an emoticon category: </label>
 				<select id='selectReactAscii' onchange="showChoices(this)">
 					
-					<!-- value has a for ascii -->
 					<option value="a0"></option>
 					<% for(var category in user.local.ascii_emoticons) { %>
 						<option value="<%= category %>"> <%= category %></option> 
@@ -171,11 +179,12 @@
 					<!-- for each emoticon category, list the options. keep them hidden until selected with the dropdown -->
 					<% for(var category in user.local.ascii_emoticons) { %>		
 						<ul id='<%= category %>' class='ascii_face' style="display: none">
-						
-							<% for(var i = 0; i < user.local.ascii_emoticons[category].length; i++){ %>		
-								<li id='<%= category + i %>' onclick='addReactionToChat(this)'> <%=  user.local.ascii_emoticons[category][i]  %> <span class='removeAscii' onclick='removeEmoticon(this)'> remove </span> </li>					
+							<% for(var i = 0; i < user.local.ascii_emoticons[category].length; i++){ %>
+								<li>
+									<p id='<%= category + i %>' onclick='addReactionToChat(this)'> <%=  user.local.ascii_emoticons[category][i]  %> </p>
+									<p class='removeAscii' onclick='removeEmoticon(this)'> remove </p> 									
+								</li>
 							<% } %>
-						
 						</ul>		
 					<% } %>
 					
@@ -184,10 +193,9 @@
 
 				<div id='addNewEmoticon'>
 					<ul>
-						<label> emotion: </label>
-						<li><input type='text' id='newOption'></input></li>
-						<label> ascii: </label>
-						<li><input type='text' id='newEmoticon'></input></li>
+						<li><label> emotion: </label> <input type='text' id='newOption' placeholder='i.e. happy, sad, annoyed, ...'></input></li>
+						<br>
+						<li><label> ascii: </label> <input type='text' id='newEmoticon' placeholder='i.e. (ಠ‿ಠ), (ノಠ益ಠ)ノ, ...'></input></li>
 						<br>
 						<button onclick='addNewEmoticon()'> add </button>
 					</ul>
@@ -201,6 +209,10 @@
 					<input id="fileInput" style="display:none;" type="file">
 					<button onclick='fileHandler()'> select picture </button>
 				</div>
+				
+				<hr>
+				
+				<p> the font used is <a href='https://fonts.google.com/specimen/Roboto+Condensed?selection.family=Roboto+Condensed'> Roboto Condensed </a> </p>
 		
 			</div>
 		</div>
@@ -210,7 +222,7 @@
 			<div id='display'>
 				<ul id="messages"></ul>
 			</div>
-			
+			<hr>
 			<div id='sendMsg'>
 				<form action="">
 				<input id="m" autocomplete="off" />
@@ -288,8 +300,8 @@
 					return;
 				}
 			
-				var selectedOption = document.getElementById(option.value); // the ascii face category the user selects
-				//console.log(selectedOption);
+				// the ascii face category the user selects
+				var selectedOption = document.getElementById(option.value);
 				
 				selectedOption.style.display = "block";
 				choicesDisplay.style.display = "block";
@@ -311,7 +323,6 @@
 			/****
 			
 				add a new custom emoticon to the dropdown box
-				help! - https://stackoverflow.com/questions/41599523/update-a-field-only-if-it-exists-in-mongodb
 			
 			*****/
 			function addNewEmoticon(){
@@ -333,9 +344,10 @@
 				if(selectedCategory){
 					// look through the child elements of the selected category. these will be <li> elements 
 					for(var i = 0; i < selectedCategory.children.length; i++){
-						if(selectedCategory.children[i].textContent.indexOf(emoticon) >= 0){
+						// need to go to one more layer of child nodes to get to the emoticon (should be a p element)
+						if(selectedCategory.children[i].children[0].textContent.indexOf(emoticon) >= 0){
 							// if a match for an emoticon is found, don't do anything.
-							console.log("already exists...");
+							console.log("that emoticon already exists...");
 							return;
 						}
 					}
@@ -345,39 +357,44 @@
 					type: 'POST',
 					url: '/post_ascii/?' + 'category=' + option + '&' + 'face=' + emoticon,
 					success: function(response){				
-						//console.log(response);
 						/***
 							on client side, add the new emoticon manually by creating the element and appending
 						***/
 						
-						var newEmoticon = document.createElement('li');
+						var newEmoticonListNode = document.createElement('li');
+						var newEmoticon = document.createElement('p');
 						newEmoticon.textContent = emoticon;
+						
+						// get current number of emoticons in this category 
+						var count = response.local.ascii_emoticons[option].length;
+						newEmoticon.id = option + count;
 						
 						newEmoticon.addEventListener('click', function(){
 							addReactionToChat(this);
 						}, false);
 						
-						var removeOption = document.createElement('span');
+						var removeOption = document.createElement('p');
 						removeOption.textContent = "remove";
 						removeOption.classList.add("removeAscii");
 						
 						removeOption.addEventListener('click', function(){
-							removeAscii(this);
+							removeEmoticon(this);
 						}, false);
 						
-						newEmoticon.appendChild(removeOption);
+						newEmoticonListNode.appendChild(newEmoticon);
+						newEmoticonListNode.appendChild(removeOption);
 					
 						// if the category already exists, just append a new li element 
 						if(selectedCategory){
 							// if category already exists, just append to it 
-							selectedCategory.appendChild(newEmoticon);
+							selectedCategory.appendChild(newEmoticonListNode);
 						}else{
 							// otherwise, make the new category element 
 							var newCategory = document.createElement('ul');
 							newCategory.id = option;
 							newCategory.classList.add('ascii_face');
 							newCategory.style.display = "none";
-							newCategory.appendChild(newEmoticon);
+							newCategory.appendChild(newEmoticonListNode);
 							
 							// append new category to asciiReactionChoices
 							document.getElementById('asciiReactionChoices').appendChild(newCategory);
@@ -400,13 +417,11 @@
 			******/
 			function removeEmoticon(element){
 			
-				// get parent node of the 'remove' span element that was clicked on 
-				var emoticonNode = element.parentNode;
+				// get sibling node of the 'remove' p element that was clicked on 
+				var emoticonNode = element.parentNode.children[0];
 				
-				// get the text of the parent node (should be an emoticon)
-				var emoticonToRemove = $('#' + emoticonNode.id).contents().filter(
-					function(){ return this.nodeType === 3}
-				).text();
+				// get the text of the sibling node (should be an emoticon)
+				var emoticonToRemove = emoticonNode.textContent;
 				
 				// find out what option is currently selected in the dropdown 
 				var select = document.getElementById('selectReactAscii');
@@ -424,46 +439,15 @@
 								now delete the emoticon client-side manually 
 								how about deleting the option if the last emoticon in that category is deleted?
 							***/
-							var categoryOptions = emoticonNode.parentNode; // this should get the ul element of the emoticon category 
-							categoryOptions.removeChild(emoticonNode);
+							// this should get the ul element of the emoticon category
+							var categoryOptions = emoticonNode.parentNode.parentNode; 
 							
-							console.log(response);
-						}
-				});
-			
-			/*
-				// remove from array first!
-				var emoticonToRemove = element.parentNode.textContent;
-				// find out the current selected option
-				var select = document.getElementById('selectReactAscii');
-				var option = select.options[select.selectedIndex].textContent.trim();
-				
-				// find the right emoticon to remove in the array it's in
-				//var arr = defaultAscii[option];
-			
-				// adjust emoticonToRemove to remove the 'remove' string from the span element
-				var emoticonToRemove = emoticonToRemove.substring(0, emoticonToRemove.indexOf('remove'));
-			
-				// make call to server to delete from database 
-				$.ajax({
-						type: 'DELETE',
-						 // append the selected ascii face, and its category, as query parameters to the url.
-						 // the two queries are: category and face 
-						url: '/delete_asciiface/?' + 'category=' + option + '&' + 'face=' + emoticonToRemove,
-						success: function(response){				
-							// get back updated ascii face array and reasign to userAscii
-							defaultAscii = response;
+							// delete the li element where the emoticon (p element) lives 
+							categoryOptions.removeChild(element.parentNode);
 							
-							// re-show selected emotion option contents after update 
-							showChoices(select.options[select.selectedIndex]);			
-							
-							// indicate successful delete 
 							//console.log(response);
 						}
-				});
-				
-			*/
-				
+				});				
 			}
 			
 			/*

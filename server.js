@@ -1,7 +1,6 @@
 /* notes:
 
 super helpful! https://scotch.io/tutorials/easy-node-authentication-setup-and-local
-best solution: https://stackoverflow.com/questions/45121440/redirect-to-new-page-after-ajax-post-request-using-express
 https://medium.com/@johnnyszeto/node-js-user-authentication-with-passport-local-strategy-37605fd99715
 http://aleksandrov.ws/2013/09/12/restful-api-with-nodejs-plus-mongodb/
 https://www.sitepoint.com/local-authentication-using-passport-node-js/
@@ -45,47 +44,6 @@ require('./routes/routes.js')(app, passport);
 
 // this stuff is for handling the chat functionality of the application.
 io.on('connection', function(socket){
-	//console.log('a user connected');
-
-	// this is where the database lives 
-	var url = 'mongodb://127.0.0.1:27017/chatapp';
-	
-	/*
-		you need to know whether this connection has a default user (no login) or logged-in user
-		on the other end. if default, then do the stuff below. If use is logged-in, you need to 
-		serve that user the ascii faces and other data that they have saved!
-	
-	
-	// when server is on, the database will also be connected  
-	MongoClient.connect(url, function(err, db){
-		assert.equal(null, err);
-		console.log("connected to server");
-		
-	
-			// create (or use if already existing) new collection called 'users' 
-			var coll = db.collection('userData');
-			
-			// this is the collection of default ascii faces
-			// the upsert should prevent adding duplicates 
-			coll.update(
-				{"_id": "default"},
-				// this object represents the default user! so id is default. 
-				{   
-					"_id": "default",  
-					"ascii_happy": ["^_^", ":)", ":D"],
-					"ascii_sad": [":<"], 
-					"ascii_angry": ["（　ﾟДﾟ）", ">:|"], 
-					"ascii_funny": ["¯\\_(ツ)_/¯"],
-					"ascii_other": ["ʕ•ᴥ•ʔ"]
-				},
-				{upsert: true}
-			);
-	
-		
-
-		db.close();
-	});
-	*/
 	
 	socket.on('chat message', function(msg){
 		// this is the server sending out the message to every client
