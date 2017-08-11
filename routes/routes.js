@@ -13,6 +13,7 @@ module.exports = function(app, passport){
 		res.render('login.ejs', { message: "" });
 	});
 	
+	// show the login page 
 	app.get('/login', function(req, res){
 		res.render('login.ejs', { message: req.flash('loginMessage') });
 	});
@@ -26,21 +27,6 @@ module.exports = function(app, passport){
 		//console.log(req.user);
 		res.render('index.ejs', {user: req.user});
 	});
-	
-
-	/******
-
-		the app.get and app.post below are for when the user wants to bypass login and just use 
-		chat as anonymous user. 
-		
-	******/
-	// so when the client does the post request asking for '/nologin',
-	// the server will send back a success (200) response. as a result,
-	// the client will then change the url to the '/index.html' page via window.location.
-	// then the server will pick up on that change and treat it like a request?? I think so, a get request.
-	// that change to the url points to a new blank page, which I think is why when I sendFile('/index.html'),
-	// it can get served because there's no html already present. 
-	// https://stackoverflow.com/questions/10777246/interweave-ejs-and-javascript-variables-inside-tags
 	
 	// show the register page 
 	app.get('/register', function(req, res){
@@ -91,22 +77,6 @@ module.exports = function(app, passport){
 	// the request will ask for a url, which the below will respond to. simply connect to the database
 	// and send back the default ascii faces info as the response. 
 	app.get('/default', function(req, res){
-		
-		/*
-		// connect with database 
-		var url = 'mongodb://127.0.0.1:27017/chatapp';
-		MongoClient.connect(url, function(err, db){
-			assert.equal(null, err);
-			console.log("getting the default ascii faces ^_^...");
-			
-			// get the default emoticons 
-			var defaultSet = db.collection('userData').findOne({"_id": "default"}, function(err, result){
-				res.send(result); // send back to client the associative array with all the default emoticons 
-			});
-			
-			db.close();
-		});
-		*/
 	});
 
 	// this is for when user wants to add a new emoticon 

@@ -26,7 +26,7 @@
 	#bottom{
 		position: absolute;
 		bottom: 0;
-		left: 10%;
+		left: 25%;
 	}
 	#user, #pass{
 		font-family: 'Poppins', sans-serif;
@@ -34,9 +34,13 @@
 		display: block;
 		margin-top: 5%;
 	}
-	#myname, #def{
+	#myname{
 		font-family: 'Poppins', sans-serif;
 		font-size: 10px;
+	}
+	#register{
+		font-family: 'Poppins', sans-serif;
+		font-size: 18px;
 	}
 	button{
 		margin-top: 10px;
@@ -66,7 +70,7 @@
 
 	<div id='loginScreen'>
 		<div id='top'>
-			<h2> nick's chat app. whoooo. </h2>
+			<h2> a chat application </h2>
 		</div>
 		
 		<!-- show message that comes back with authentication, if any -->
@@ -86,11 +90,11 @@
 		
 		<!-- end form -->
 		
-		<p id='def'> or <a onclick='defaultSubmit()' href='#'> enter </a> as a default user (nothing will be saved!) </p>
-		<p id='def'> or register as a new user <a href='/register'> here </a> </p>
+		<!-- <p id='def'> or <a onclick='defaultSubmit()' href='#'> enter </a> as a default user (nothing will be saved!) </p> -->
+		<p id='register'> <a href='/register'> register </a> as a new user </p>
 
 		<div id='bottom'>
-			<p> check out these awesome fonts <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> here </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> here </a>! </p>
+			<p> fonts used found <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> here </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> here </a> </p>
 			<hr>
 			<p id='myname'> (c) n.c.h 2017 </p>
 		</div>
