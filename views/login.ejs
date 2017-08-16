@@ -26,7 +26,7 @@
 	#bottom{
 		position: absolute;
 		bottom: 0;
-		left: 25%;
+		left: 20%;
 	}
 	#user, #pass{
 		font-family: 'Poppins', sans-serif;
@@ -43,7 +43,7 @@
 		font-size: 18px;
 	}
 	button{
-		margin-top: 10px;
+		margin-top: 25px;
 		padding: 4px 5px 4px 5px;
 		border-radius: 6px;
 		border: 1px solid #000;
@@ -94,7 +94,7 @@
 		<p id='register'> <a href='/register'> register </a> as a new user </p>
 
 		<div id='bottom'>
-			<p> fonts used found <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> here </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> here </a> </p>
+			<p> fonts used: <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> Poppins </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> Indie Flower </a> </p>
 			<hr>
 			<p id='myname'> (c) n.c.h 2017 </p>
 		</div>
@@ -103,42 +103,6 @@
 </body>
 
 <script>
-// help!
-// https://stackoverflow.com/questions/14035264/node-js-username-and-password-authentication
-// https://stackoverflow.com/questions/7990890/how-to-implement-login-auth-in-node-js/8003291#8003291
-// https://stackoverflow.com/questions/28042870/node-js-api-allow-users-to-only-update-and-delete-their-own-object
-
-/*
-function submit(){
-
-	// for now, just send a quick get request to the server and get the chat page.
-	// btw, this should be POST!!!
-	$.ajax({
-		type: 'GET',
-		contentType: 'application/json',
-		url: '/test',
-		success: function(response){
-			// how to do page redirect??
-			console.log("login success!");
-		}
-	});
-}
-*/
-
-// if user wants to not login/make account
-// just redirect to the chat 
-function defaultSubmit(){
-	
-	$.ajax({
-		type: 'POST',
-		url: '/nologin',
-		success: function(res){
-			window.location.pathname = '/mainchat'
-		}
-	});
-	
-}
-
 </script>
 
 </html>

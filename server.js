@@ -7,9 +7,6 @@ https://www.sitepoint.com/local-authentication-using-passport-node-js/
 https://www.raymondcamden.com/2016/06/23/some-quick-tips-for-passport/
 
 // how to get list of logged in users through socket?
-https://www.codementor.io/tips/0217388244/sharing-passport-js-sessions-with-both-express-and-socket-io
-https://stackoverflow.com/questions/13095418/how-to-use-passport-with-express-and-socket-io
-https://codereview.stackexchange.com/questions/145373/passing-sessions-from-expresspassport-to-socket-io
 https://stackoverflow.com/questions/8788790/list-of-connected-clients-username-using-socket-io?lq=1
 */
 
@@ -67,11 +64,19 @@ io.use(function(socket, next){
 	sessionMiddleware(socket.request, {}, next);
 });
 
+// array to store all currently logged in users 
+var users = [];
 io.on('connection', function(socket){
 	
 	// see if can get logged-in user info 
 	// didn't get what I thought I would get. are usernames stored with sessions?
 	// console.log(socket.request.session.passport);
+	socket.on('userConnected', function(username){
+		if(users.indexOf(username) < 0){
+			users.push(username);
+		}
+		io.emit('getCurrentUsers', users);
+	});
 	
 	socket.on('chat message', function(msg){
 		// this is the server sending out the message to every client
@@ -82,12 +87,12 @@ io.on('connection', function(socket){
 		// adding whitespace doesn't work because this message will be surrounded by <li> tags 
 		// instead, you can use '\u00A0', the unicode for whitespace 
 		// https://stackoverflow.com/questions/12882885/how-to-add-nbsp-using-d3-js-selection-text-method
-		io.emit('chat message', msg + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 " + timestamp);
+		io.emit('chat message', msg.user + ": " + msg.msg + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 " + timestamp);
 	});
 	
-	socket.on('image', function(imgData){
+	socket.on('image', function(img){
 		// send all clients the imgData that was sent here (to this server)
-		io.emit('image', imgData);
+		io.emit('image', img);
 	});
 });
 

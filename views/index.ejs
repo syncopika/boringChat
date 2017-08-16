@@ -120,35 +120,33 @@
 		<div id='optionsBar'>
 		
 			<div id='people'>
+				<h2 id='userGreeting'> hello, <%= user.local.username %> </h2>
 				<h3> currently online: </h2>
 				<ol id='userList'>
-					<!-- list the users -->
+					<!-- list the users 
 					<li> <%= user.local.username %> </li>
+					-->
 				</ol>
 			</div>
 			
+			<!-- pictures can be dealt with later... 
 			<hr>
 			
 			<div id='reactionPics'>
 				<h2> reaction pictures </h2>
 				
-				<!-- select a reaction picture here -->
 				<select id='selectReactPic' onchange="showChoices(this)">
-					<!-- value has p for pic
 						<option value="p0"></option>
 						<option value="p1"> happy </option>
 						<option value="p2"> sad </option>
 						<option value="p3"> angry </option>
 						<option value="p4"> funny </option>
-					-->
 				</select>
 				
-				<!-- choices show up here after selecting option --> 
 				<div id='picReactionChoices'>
 					<h1> stuff goes here... <h2>
 				</div>
 				
-				<!-- add a new reaction pic -->
 				<div id='addNewReactPic'>
 					<h3> add new reaction pic! </h3>
 					<input id="fileInput" style="display:none;" type="file">
@@ -156,6 +154,7 @@
 					<label> category: <input id='picCategory' type='text' /> </label>
 				</div>
 			</div>
+			-->
 			
 			<hr>
 			
@@ -236,9 +235,26 @@
 
 			$(function(){
 			
+				// tell the server the username of this user that just connected 
+				var greeting = $('#userGreeting').text();
+				var username = greeting.substring(greeting.indexOf(',') + 1).trim();
+				socket.emit('userConnected', username);
+				
+				// then get all the current users from server and list them 
+				socket.on('getCurrentUsers', function(userList){
+					// empty user list first before updating
+					$('#userList').empty();
+					var list = document.getElementById('userList');
+					for(var i = 0; i < userList.length; i++){
+						var user = document.createElement('li');
+						user.textContent = userList[i];
+						list.appendChild(user);
+					}
+				});
+			
 				$('form').submit(function(){
 					// send the message to the server, which will then send this message to all clients
-					socket.emit('chat message', $('#m').val());
+					socket.emit('chat message', {'user': username, 'msg': $('#m').val()});
 					$('#m').val('');
 					return false;
 				});
@@ -249,7 +265,7 @@
 				socket.on('image', function(imgData){
 					// this is where client handles imgData sent from the server 
 					var img = new Image();
-					img.src = imgData;
+					img.src = imgData.img;
 					
 					var canvas = document.createElement('canvas');
 					canvas.setAttribute("width", "200px");
@@ -262,6 +278,11 @@
 					
 					var newListElement = document.createElement('li');
 					var timestamp = new Date().toLocaleString();
+					
+					// also include username of user who sent it
+					var user = document.createElement('span');
+					user.textContent = imgData.user + ": ";
+					newListElement.appendChild(user);
 					
 					newListElement.appendChild(canvas);
 					var date = document.createElement('span');
@@ -473,12 +494,14 @@
 					// get the base64 data of the image and assign it to imgData variable 
 					imgData = reader.result;
 					
+					var greeting = $('#userGreeting').text();
+					var username = greeting.substring(greeting.indexOf(',') + 1).trim();
+					
 					// send that variable to the server so it can send it to all clients
-					socket.emit('image', imgData);
-				
+					socket.emit('image', {'user': username, 'img': imgData});
 				}
 
-				//read teh file as a URL
+				//read file as a URL
 				reader.readAsDataURL(file);
 			};
 
