@@ -13,8 +13,13 @@ https://stackoverflow.com/questions/8788790/list-of-connected-clients-username-u
 // set up server 
 var express = 			require('express');
 var app = 				express();
+
+// the order is important here!
+var port = 				process.env.PORT || 3000; 
 var http = 				require('http').Server(app);
 var io = 				require('socket.io')(http);
+http.listen(port);
+
 var mongoose = 			require('mongoose');
 var passport = 			require('passport');
 var flash = 			require('connect-flash');
@@ -96,7 +101,7 @@ io.on('connection', function(socket){
 	});
 });
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+http.listen(port, function(){
+	console.log('listening on *:' + port);
 });
 
