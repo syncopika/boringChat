@@ -1,9 +1,18 @@
 # boringChat    
 a basic chat application using Node.js, Socket.IO, Express.js, MongoDB/Mongoose, ejs templates, etc.     
-      
-The only really cool feature that I think makes this program different from other chat applications out there is the fact that users will be able to preset emotions (i.e. happy, angry, sad) mapped to a variety of ~~pictures~~ and ASCII emoticons. That way when you're chatting and just words won't do, you don't have to search online for a particular ASCII emoticon ~~or a particular picture~~ to suit your needs.
+    
+have you seen/used emoticons like these before?    
+ლ(ಠ_ಠლ)    
+(ﾉ◕ヮ◕)ﾉ*    
+(☉_☉)    
+
+They're fun to use when chatting, but difficult to type out, if you can even do so, and sometimes can be a pain to find online. (╯°□°）╯︵ ┻━┻    
+    
+Therefore I made this application where users will be able to preset emotions (i.e. happy, angry, sad) mapped to a variety of ASCII emoticons.    
+    
+That way when you're chatting and just words won't do, you don't have to search online for a particular ASCII emoticon (which can be pretty complicated) to suit your needs.
      
-<b>things to think about:</b> 
+<b>things to think about:</b>    
 probably should apply some limitations on the number of emoticons that can be saved per user.       
 how about image imports? gifs?    
     
