@@ -26,7 +26,8 @@
 	#bottom{
 		position: absolute;
 		bottom: 0;
-		left: 20%;
+		width: 100%;
+		text-align: center;
 	}
 	#user, #pass{
 		font-family: 'Poppins', sans-serif;
@@ -36,7 +37,7 @@
 	}
 	#myname{
 		font-family: 'Poppins', sans-serif;
-		font-size: 10px;
+		font-size: 12px;
 	}
 	#register{
 		font-family: 'Poppins', sans-serif;
@@ -63,14 +64,14 @@
 	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
-	<title> nick's chatapp login </title>
+	<title> boringChat login </title>
 </head>
 
 <body>
 
 	<div id='loginScreen'>
 		<div id='top'>
-			<h2> a chat application </h2>
+			<h2> Welcome to boringChat! </h2>
 		</div>
 		
 		<!-- show message that comes back with authentication, if any -->
@@ -91,10 +92,9 @@
 		<!-- end form -->
 		
 		<!-- <p id='def'> or <a onclick='defaultSubmit()' href='#'> enter </a> as a default user (nothing will be saved!) </p> -->
-		<p id='register'> <a href='/register'> register </a> as a new user </p>
+		<p id='register'> or <a href='/register'> register </a> as a new user </p>
 
 		<div id='bottom'>
-			<p> fonts used: <a href='https://fonts.google.com/specimen/Poppins?selection.family=Poppins'> Poppins </a> and <a href='https://fonts.google.com/specimen/Indie+Flower?selection.family=Indie+Flower'> Indie Flower </a> </p>
 			<hr>
 			<p id='myname'> (c) n.c.h 2017 </p>
 		</div>
