@@ -4,6 +4,7 @@
 
 	<head>
 		<meta charset='utf-8'>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title> boringChat </title>
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -113,6 +114,40 @@
 			.removeAscii:hover {
 				color: rgba(178, 0, 0, .8);
 			}
+			
+			@media screen and (max-width: 800px){
+				#optionsBar {
+				}
+				#reactionASCII h3{
+					font-size: 18px;
+				}
+				#people h2{
+					font-size: 20px;
+				}
+				#m{
+					width: 60%;
+				}
+				input, select{
+					width: 100%;
+				}
+				#asciiReactionChoices{
+					border: none;
+				}
+				#asciiReactionChoices p{
+					font-size: 12px;
+				}
+				#asciiReactionChoices ul{
+					padding: 0;
+				}
+				#asciiReactionChoices li{
+					font-size: 10px;
+					whitespace: nowrap;
+				}
+				.removeAscii{
+					color: rgba(178, 0, 0, .8);
+				}
+			
+			}
 
 		</style>
 	</head>
@@ -123,7 +158,7 @@
 		
 			<div id='people'>
 				<h2 id='userGreeting'> hello, <%= user.local.username %> </h2>
-				<h3> currently online: </h2>
+				<h3> currently online: </h3>
 				<ol id='userList'>
 					<!-- list the users 
 					<li> <%= user.local.username %> </li>
