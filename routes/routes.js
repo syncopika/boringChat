@@ -24,8 +24,9 @@ module.exports = function(app, passport){
 		failureRedirect: '/login',
 		failureFlash: true
 	}), function(req, res){
-		//console.log(req.user);
-		res.render('index.ejs', {user: req.user});
+		// go to mainChat via 'get /mainChat'
+		res.redirect('/mainChat/');
+		// res.render('index.ejs', {user: req.user});
 	});
 	
 	// show the register page 
@@ -35,13 +36,13 @@ module.exports = function(app, passport){
 	
 	// take care of registering user after form input has been submitted 
 	app.post('/register', passport.authenticate('local-register', {
-		successRedirect: '/index', // go to chat page 
+		successRedirect: '/mainChat', //'/index', // go to chat page 
 		failureRedirect: '/register',
 		failureFlash: true
 	}));
-
-	// show chat page after user has logged in 
-	app.get('/index', function(req, res){
+	
+	// direct to chatroom, with mainChat in the url
+	app.get('/mainChat', function(req, res){
 		res.render('index.ejs', {
 			user: req.user 	// get user name from session and pass to template
 		});
