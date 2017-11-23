@@ -14,10 +14,12 @@
 				height: 100%;
 				width: 100%;
 			}
+			
 			body {
 				font: 13px;
 				font-family: 'Roboto Condensed', sans-serif;
 			}
+			
 			#optionsBar {
 				display: inline-block;
 				height: 94%;
@@ -28,12 +30,13 @@
 				padding-right: 8px;
 				overflow: auto;
 			}
+			
 			#chatbox {
 				display: inline-block;
 				position: absolute;
 				height: 100%;
 				width: 65%;
-			}
+			}	
 			
 			#display {
 				position: relative;
@@ -43,12 +46,15 @@
 				border: 1px solid #000;
 				overflow: auto;
 			}
+			
 			.ascii_face li {
 				font-size: 18px;
 			}
+			
 			.ascii_face p {
 				display: inline-block;
 			}
+			
 			form {
 				position: relative;
 				background: #fff;
@@ -56,35 +62,42 @@
 				top: 95%;
 				width: 100%;
 			}
+			
 			#sendMsg{
 				width: 100%;
 			}
+			
 			form input {
 				border: 1px solid #000;
 				padding: 10px;
 				width: 90%;
 				margin-right: 1%;
 			}
+			
 			form button {
 				width: auto;
 				margin: 0;
 				background: rgb(130, 224, 255);
 				padding: 10px 15px 10px 15px;
 			}
+			
 			#optionsBar button {
 				padding: 3px 5px 3px 5px;
 				border: 1px solid #000;
 				border-radius: 6px;
 			}
+			
 			#messages {
 				list-style-type: none;
 				margin: 0;
 				padding: 0;
 			}
+			
 			#messages li {
 				padding: 5px 10px;
 				margin: 0;
 			}
+			
 			#messages li:nth-child(odd){
 				background: #eee;
 			}
@@ -146,7 +159,10 @@
 				.removeAscii{
 					color: rgba(178, 0, 0, .8);
 				}
+			}
 			
+			#logout{
+				text-decoration: none;
 			}
 
 		</style>
@@ -160,9 +176,7 @@
 				<h2 id='userGreeting'> hello, <%= user.local.username %> </h2>
 				<h3> currently online: </h3>
 				<ol id='userList'>
-					<!-- list the users 
-					<li> <%= user.local.username %> </li>
-					-->
+					<!-- list the users -->
 				</ol>
 			</div>
 			
@@ -195,7 +209,7 @@
 			
 			<hr>
 			
-			<!-- oops! not all emoticons are ASCII! some contain Unicode characters as well. -->
+			<!-- oops! not all emoticons are ASCII! some contain Unicode characters as well. bad naming :< -->
 			<div id='reactionASCII'>
 				<h3> pick an emoticon </h3>
 				
@@ -246,6 +260,10 @@
 					<input id="fileInput" style="display:none;" type="file">
 					<button onclick='fileHandler()'> select picture </button>
 				</div>
+				
+				<hr>
+				
+				<p><a id='logout' href='/logout' onclick='userDisconnect()'> logout? </a></p>
 
 			</div>
 		</div>
@@ -266,13 +284,16 @@
 		
 		<script>
 			var socket = io();
-
+			var thisUsername;
+			
 			$(function(){
 			
 				// tell the server the username of this user that just connected 
 				var greeting = $('#userGreeting').text();
 				var username = greeting.substring(greeting.indexOf(',') + 1).trim();
 				socket.emit('userConnected', username);
+				
+				thisUsername = username; // keep this info for use when logging out 
 				
 				// then get all the current users from server and list them 
 				socket.on('getCurrentUsers', function(userList){
@@ -326,6 +347,16 @@
 					$('#messages').append(newListElement);
 				});
 			});
+			
+			/****
+			
+				when user disconnects, update current users list 
+				
+			****/
+			function userDisconnect(){
+				// tell the server that a user has disconnected and update current users list 
+				socket.emit('userHasDisconnected', thisUsername);
+			}
 			
 			/****
 			

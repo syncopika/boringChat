@@ -26,7 +26,6 @@ module.exports = function(app, passport){
 	}), function(req, res){
 		// go to mainChat via 'get /mainChat'
 		res.redirect('/mainChat/');
-		// res.render('index.ejs', {user: req.user});
 	});
 	
 	// show the register page 
@@ -49,10 +48,10 @@ module.exports = function(app, passport){
 	});
 	
 	// show logout page 
+	// https://stackoverflow.com/questions/13758207/why-is-passportjs-in-node-not-removing-session-on-logout
 	app.get('/logout', function(req, res){
 		req.logout(); 			// this is a passport function
 		res.redirect('/');  	// go back to home page 
-	
 	});
 	
 	// middleware function to make sure user is logged in

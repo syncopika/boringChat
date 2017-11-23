@@ -83,6 +83,13 @@ io.on('connection', function(socket){
 		io.emit('getCurrentUsers', users);
 	});
 	
+	// when a user disconnects, update current users and emit new updated list to everyone
+	socket.on('userHasDisconnected', function(username){
+		var indexOfUsername = users.indexOf(username);
+		users.splice(1, indexOfUsername);
+		io.emit('getCurrentUsers', users);
+	});
+	
 	socket.on('chat message', function(msg){
 		// this is the server sending out the message to every client
 		
