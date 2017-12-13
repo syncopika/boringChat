@@ -30,7 +30,8 @@ the chat area:
 ### steps needed to make this work locally:    
 1. set up database, i.e. MongoDB locally or somewhere else.     
 2. don't forget to have the dependencies installed via npm!     
-3. startup the database by executing mongod.exe and then mongo.exe on the command line. (be mindful of the database name to access though: see config/database.js where the location is specified)        
+3. startup the database by executing mongod.exe and then mongo.exe on the command line. (be mindful of the database name to access though: see config/database.js where the location is specified)    
+    You can check out the batch script I made to start up both executables easily too! See the file called "startdb.bat". Note that this is for Windows users, but it can be easily translated to Bash also.    
 4. go to the directory where "server.js" lives and then on the command line: ```node server.js```. this starts up the express server. Then go to ```localhost:3000```.    
 
 ### helpful resources:    

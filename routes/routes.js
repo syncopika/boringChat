@@ -50,6 +50,7 @@ module.exports = function(app, passport){
 	// show logout page 
 	// https://stackoverflow.com/questions/13758207/why-is-passportjs-in-node-not-removing-session-on-logout
 	app.get('/logout', function(req, res){
+		// remove username from current users list 
 		req.logout(); 			// this is a passport function
 		res.redirect('/');  	// go back to home page 
 	});
@@ -84,8 +85,20 @@ module.exports = function(app, passport){
 		
 		// keep in mind that some characters, when not properly escaped, will be ignored in the query, i.e
 		// chars like '%' and '#' will result in a blank when trying to get the 'selectedFace'. so '#_#' is invalid right now. 
+		// SHOULD DO MORE TESTING FOR THIS! 
+		var regex = /[%$#]/g;
 		var category = req.query.category.trim();
 		var selectedFace = req.query.face.trim();
+		
+		// check for invalid input (at least make sure that an empty string is not submitted! that will throw a MongoError about empty field name)
+		// if invalid input found, just exit 
+		if(category === " " || category === "" || selectedFace === " " || selectedFace === ""){
+			return;
+		}
+		
+		if(selectedFace.match(regex) !== null){
+			return;
+		}
 		
 		// update database with the new info
 		var key = "local.ascii_emoticons" + "." + category;
